@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "wifi": {
+    "mode": "ap",
+    "ap_ssid": "CameraController-Setup",
+    "ap_password": "camera123",
+    "sta_ssid": "",
+    "sta_password": ""
+  },
+  "camera": {
+    "auto_connect": true,
+    "focus_before_shot": false,
+    "focus_delay_ms": 500,
+    "stabilization_delay_ms": 2000
+  },
+  "gcode": {
+    "trigger_mode": "layer_change",
+    "layer_patterns": [
+      ";LAYER_CHANGE",
+      ";BEFORE_LAYER_CHANGE",
+      ";LAYER:",
+      "; layer",
+      ";Layer:",
+      "; Layer ",
+      ";layer ",
+      ";LAYER_END",
+      ";LAYER_START",
+      "; layer_z"
+    ],
+    "z_height_increment": 0.2,
+    "require_stabilization": true
+  },
+  "serial": {
+    "baud_rate": 115200,
+    "passthrough_enabled": true
+  },
+  "led": {
+    "enabled": true,
+    "blink_on_photo": true
+  }
+}

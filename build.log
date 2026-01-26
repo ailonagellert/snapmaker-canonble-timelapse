@@ -1,0 +1,46 @@
+Processing esp32c3 (platform: espressif32; board: esp32-c3-devkitm-1; framework: arduino)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-c3-devkitm-1.html
+PLATFORM: Espressif 32 (6.12.0) > Espressif ESP32-C3-DevKitM-1
+HARDWARE: ESP32C3 160MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-builtin, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20017.241212+sha.dcc1105b 
+ - tool-esptoolpy @ 2.40900.250804 (4.9.0) 
+ - tool-openocd-esp32 @ 2.1100.20220706 (11.0) 
+ - toolchain-riscv32-esp @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 39 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- ArduinoJson @ 6.21.5
+|-- Canon BLE Remote @ 1.0.2+sha.ba4fe82
+|-- ArduinoNvs @ 2.10.0
+|-- ESPAsyncWebServer @ 3.6.0+sha.ad3741d
+|-- AsyncTCP @ 3.3.2+sha.ef448a8
+|-- WiFi @ 2.0.0
+Building in release mode
+Compiling .pio\build\esp32c3\src\main.cpp.o
+In file included from src/main.cpp:4:
+include/config.h:24: warning: "LED_BUILTIN" redefined
+ #define LED_BUILTIN 8
+ 
+In file included from C:/Users/ErichGellert/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h:29,
+                 from C:/Users/ErichGellert/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h:83,
+                 from C:/Users/ErichGellert/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h:36,
+                 from src/main.cpp:1:
+C:/Users/ErichGellert/.platformio/packages/framework-arduinoespressif32/variants/esp32c3/pins_arduino.h:11: note: this is the location of the previous definition
+ #define LED_BUILTIN LED_BUILTIN  // allow testing #ifdef LED_BUILTIN
+ 
+src/main.cpp: In function 'void setup()':
+src/main.cpp:45:5: error: 'Serial0' was not declared in this scope
+     Serial0.begin(115200);
+     ^~~~~~~
+src/main.cpp:45:5: note: suggested alternative: 'Serial1'
+     Serial0.begin(115200);
+     ^~~~~~~
+     Serial1
+*** [.pio\build\esp32c3\src\main.cpp.o] Error 1
+========================= [FAILED] Took 16.82 seconds =========================

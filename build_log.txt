@@ -1,0 +1,28 @@
+Processing esp32c3 (platform: espressif32; board: esp32-c3-devkitm-1; framework: arduino)
+--------------------------------------------------------------------------------
+Verbose mode can be enabled via `-v, --verbose` option
+CONFIGURATION: https://docs.platformio.org/page/boards/espressif32/esp32-c3-devkitm-1.html
+PLATFORM: Espressif 32 (6.12.0) > Espressif ESP32-C3-DevKitM-1
+HARDWARE: ESP32C3 160MHz, 320KB RAM, 4MB Flash
+DEBUG: Current (cmsis-dap) External (cmsis-dap, esp-bridge, esp-builtin, esp-prog, iot-bus-jtag, jlink, minimodule, olimex-arm-usb-ocd, olimex-arm-usb-ocd-h, olimex-arm-usb-tiny-h, olimex-jtag-tiny, tumpa)
+PACKAGES: 
+ - framework-arduinoespressif32 @ 3.20017.241212+sha.dcc1105b 
+ - tool-esptoolpy @ 2.40900.250804 (4.9.0) 
+ - tool-openocd-esp32 @ 2.1100.20220706 (11.0) 
+ - toolchain-riscv32-esp @ 8.4.0+2021r2-patch5
+LDF: Library Dependency Finder -> https://bit.ly/configure-pio-ldf
+LDF Modes: Finder ~ chain, Compatibility ~ soft
+Found 34 compatible libraries
+Scanning dependencies...
+Dependency Graph
+|-- ArduinoJson @ 6.21.5
+|-- WiFi @ 2.0.0
+Building in release mode
+Linking .pio\build\esp32c3\firmware.elf
+c:/users/erichgellert/.platformio/packages/toolchain-riscv32-esp/bin/../lib/gcc/riscv32-esp-elf/8.4.0/../../../../riscv32-esp-elf/bin/ld.exe: .pio\build\esp32c3\src\test_minimal.cpp.o: in function `setup()':
+Z:\cameracontroller/src/test_minimal.cpp:4: multiple definition of `setup()'; .pio\build\esp32c3\src\main.cpp.o:Z:\cameracontroller/src/main.cpp:6: first defined here
+c:/users/erichgellert/.platformio/packages/toolchain-riscv32-esp/bin/../lib/gcc/riscv32-esp-elf/8.4.0/../../../../riscv32-esp-elf/bin/ld.exe: .pio\build\esp32c3\src\test_minimal.cpp.o: in function `loop()':
+Z:\cameracontroller/src/test_minimal.cpp:33: multiple definition of `loop()'; .pio\build\esp32c3\src\main.cpp.o:Z:\cameracontroller/src/main.cpp:46: first defined here
+collect2.exe: error: ld returned 1 exit status
+*** [.pio\build\esp32c3\firmware.elf] Error 1
+========================= [FAILED] Took 16.53 seconds =========================
