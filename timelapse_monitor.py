@@ -37,7 +37,7 @@ async def monitor_console():
                         timestamp = time.strftime('%H:%M:%S')
                         print(f"[{timestamp}] Detected: {response.strip()}")
                         print(f"[{timestamp}] >>> Triggering camera!")
-                        result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM4'], 
+                        result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'], 
                                      check=False, capture_output=True)
                         print(f"[{timestamp}] Command result: {result.returncode}")
                         
