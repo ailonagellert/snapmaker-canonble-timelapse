@@ -1,4 +1,4 @@
-#ifndef CONFIG_H
+
 #define CONFIG_H
 
 #include <Arduino.h>
@@ -10,9 +10,10 @@
 #define AP_SSID "CameraController"
 #define AP_PASSWORD "camera123"
 
-// WiFi Connection Settings
-#define WIFI_SSID "Dakine"
-#define WIFI_PASSWORD "J@ckL0rd"
+// WiFi Connection Settings (load from config.json at runtime)
+// Do NOT hardcode credentials here - use data/config.json instead
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
 
 // Serial Settings
 #define SERIAL_BAUD 115200
