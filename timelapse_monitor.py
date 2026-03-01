@@ -4,8 +4,22 @@ import websockets
 import json
 import subprocess
 import time
+import glob
+import os
 
 MOONRAKER_WS = "ws://localhost:7125/websocket"
+
+# Auto-detect ESP32 serial device
+def find_esp32_device():
+    """Find ESP32 device by searching /dev/ttyACM*"""
+    acm_devices = glob.glob('/dev/ttyACM*')
+    if acm_devices:
+        device = acm_devices[0]  # Use first available
+        print(f"Found ESP32 at: {device}")
+        return device
+    return None
+
+CAMERA_DEVICE = find_esp32_device()
 
 # Trigger modes (set True/False as needed)
 TRIGGER_ON_TOOLCHANGE = False
@@ -23,6 +37,10 @@ DEBUG_ALL_RESPONSES = False
 
 async def monitor_console():
     print("Connecting to Moonraker websocket...")
+    
+    if not CAMERA_DEVICE:
+        print("ERROR: Camera device not found! Exiting.")
+        return
     
     async with websockets.connect(MOONRAKER_WS) as websocket:
         # Identify websocket
@@ -70,9 +88,12 @@ async def monitor_console():
                             timestamp = time.strftime('%H:%M:%S')
                             print(f"[{timestamp}] Tool change detected: {current_extruder}")
                             print(f"[{timestamp}] >>> Triggering camera!")
-                            result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'],
-                                         check=False, capture_output=True)
-                            print(f"[{timestamp}] Command result: {result.returncode}")
+                            if CAMERA_DEVICE:
+                                result = subprocess.run(['sh', '-c', f'echo "trigger" > {CAMERA_DEVICE}'],
+                                            check=False, capture_output=True)
+                                print(f"[{timestamp}] Command result: {result.returncode}")
+                            else:
+                                print(f"[{timestamp}] ERROR: Camera device not found!")
 
                 # Optional: detect pre-extrude macro in console output
                 if "method" in data and data["method"] == "notify_gcode_response":
@@ -85,33 +106,45 @@ async def monitor_console():
                             timestamp = time.strftime('%H:%M:%S')
                             print(f"[{timestamp}] Detected macro: {response.strip()}")
                             print(f"[{timestamp}] >>> Triggering camera!")
-                            result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'],
-                                         check=False, capture_output=True)
-                            print(f"[{timestamp}] Command result: {result.returncode}")
+                            if CAMERA_DEVICE:
+                                result = subprocess.run(['sh', '-c', f'echo "trigger" > {CAMERA_DEVICE}'],
+                                            check=False, capture_output=True)
+                                print(f"[{timestamp}] Command result: {result.returncode}")
+                            else:
+                                print(f"[{timestamp}] ERROR: Camera device not found!")
 
                         if TRIGGER_ON_ACTIVATING and ACTIVATING_MARKER.lower() in str(response).lower():
                             timestamp = time.strftime('%H:%M:%S')
                             print(f"[{timestamp}] Detected tool ready: {response.strip()}")
                             print(f"[{timestamp}] >>> Triggering camera!")
-                            result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'],
-                                         check=False, capture_output=True)
-                            print(f"[{timestamp}] Command result: {result.returncode}")
+                            if CAMERA_DEVICE:
+                                result = subprocess.run(['sh', '-c', f'echo "trigger" > {CAMERA_DEVICE}'],
+                                            check=False, capture_output=True)
+                                print(f"[{timestamp}] Command result: {result.returncode}")
+                            else:
+                                print(f"[{timestamp}] ERROR: Camera device not found!")
 
                         if TRIGGER_ON_LAYER_PHOTO and LAYER_PHOTO_MARKER.lower() in str(response).lower():
                             timestamp = time.strftime('%H:%M:%S')
                             print(f"[{timestamp}] Detected layer photo trigger: {response.strip()}")
                             print(f"[{timestamp}] >>> Triggering camera!")
-                            result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'],
-                                         check=False, capture_output=True)
-                            print(f"[{timestamp}] Command result: {result.returncode}")
+                            if CAMERA_DEVICE:
+                                result = subprocess.run(['sh', '-c', f'echo "trigger" > {CAMERA_DEVICE}'],
+                                            check=False, capture_output=True)
+                                print(f"[{timestamp}] Command result: {result.returncode}")
+                            else:
+                                print(f"[{timestamp}] ERROR: Camera device not found!")
 
                         if TRIGGER_ON_WIPE and WIPE_START_MARKER.lower() in str(response).lower():
                             timestamp = time.strftime('%H:%M:%S')
                             print(f"[{timestamp}] Detected wipe start: {response.strip()}")
                             print(f"[{timestamp}] >>> Triggering camera!")
-                            result = subprocess.run(['sh', '-c', 'echo "trigger" > /dev/ttyACM0'],
-                                         check=False, capture_output=True)
-                            print(f"[{timestamp}] Command result: {result.returncode}")
+                            if CAMERA_DEVICE:
+                                result = subprocess.run(['sh', '-c', f'echo "trigger" > {CAMERA_DEVICE}'],
+                                            check=False, capture_output=True)
+                                print(f"[{timestamp}] Command result: {result.returncode}")
+                            else:
+                                print(f"[{timestamp}] ERROR: Camera device not found!")
                         
             except json.JSONDecodeError:
                 pass
