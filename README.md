@@ -16,7 +16,7 @@ Cons:
 
 ## Example Results: Filament Change G-code Trigger
 
-![Filament change demo](docs/Filmentchange.gif)
+![Filament change demo](docs/FilamentChange.gif)
 
 Pros:
 - Faster trigger flow
@@ -57,6 +57,22 @@ Cons:
 
 - Snapmaker Orca
 - OrcaSlicer
+
+## Compatibility Snapshot
+
+| Component | Status |
+|---|---|
+| Canon EOS RP | Tested |
+| Canon EOS R5 / R6 | Basic trigger flow tested |
+| Snapmaker U1 + Klipper/Moonraker | Tested |
+| Other BLE camera brands | Planned / not supported yet |
+
+## Known Limits
+
+- Canon BLE support is the current focus (other BLE camera brands are not implemented yet)
+- Trigger pipeline currently relies on host-side monitoring scripts
+- Root SSH/admin access on the printer host is required for script/service installation
+- Filament-change-trigger strategy can over/under-sample layers depending on print behavior
 
 ## Quick Start
 
@@ -145,7 +161,7 @@ Access web interface at **http://192.168.4.1**:
 ### Python Script
 Edit `/opt/timelapse_monitor/timelapse_monitor.py`:
 - Set Moonraker WebSocket URL
-- Configure layer detection patterns (supports all major slicers)
+- Configure layer detection patterns (Orca / Snapmaker Orca)
 - Adjust trigger timing
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed configuration options.
@@ -173,7 +189,7 @@ See [INSTALLATION.md](INSTALLATION.md) for complete troubleshooting guide.
 ## Support
 
 - 📖 Check the documentation links above
-- 🐛 [Report issues](../../issues) on GitHub
+- 🐛 [Report issues](issues) on GitHub
 - 💬 Discussions in project repository
 
 ## License

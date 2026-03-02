@@ -68,7 +68,7 @@ Use this file for advanced configuration details and deeper troubleshooting only
 
 ```bash
 # Navigate to project directory
-cd cameracontroller
+cd snapmaker-canonble-timelapse
 
 # Build the firmware
 pio run
@@ -79,7 +79,7 @@ pio run
 
 ### Option 2: VS Code with PlatformIO
 
-1. Open the `cameracontroller` folder in VS Code
+1. Open the `snapmaker-canonble-timelapse` folder in VS Code
 2. Click the PlatformIO icon in the sidebar
 3. Click "Build" under "esp32c3" environment
 4. Wait for compilation to complete

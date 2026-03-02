@@ -210,34 +210,13 @@ For detailed troubleshooting, see [CAMERA_PAIRING.md](docs/CAMERA_PAIRING.md).
 
 ## Configure Your Slicer
 
-Add layer change G-code command to your slicer so the ESP32 knows when to take photos.
+Add a layer-change marker in Orca/Snapmaker Orca so the monitor knows when to trigger.
 
-### Quick Setup by Slicer
+### Orca / Snapmaker Orca Setup
 
-**PrusaSlicer / SuperSlicer:**
-- Go to **Printer Settings → Custom G-code → Layer Change G-code**
-- Add: `;LAYER_CHANGE`
-- Save and set as default printer
-
-**Cura:**
-- Go to **Printer → Manage Printers → Machine Settings → Custom G-code**
-- In **Between Layers** section, add: `;LAYER_CHANGE`
-- Click **Close**
-
-**OrcaSlicer:**
 - Go to **Printer Settings → Machine G-code → Layer Change**
 - Add: `;LAYER_CHANGE`
-- Click **Save**
-
-**Simplify3D:**
-- Go to **Machine Control → Custom Scripts → Layer Change Script**
-- Add: `;LAYER_CHANGE`
-- Save printer profile
-
-**BambuStudio:**
-- Go to **Printer Settings → Machine Scripts → Layer Change**
-- Add: `;LAYER_CHANGE`
-- Save
+- Save profile and re-slice
 
 For detailed slicer instructions: **[GCODE_CONFIG.md](docs/GCODE_CONFIG.md)**
 
