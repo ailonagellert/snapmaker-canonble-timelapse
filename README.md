@@ -4,9 +4,27 @@ ESP32-C3 Bluetooth shutter controller for Canon EOS cameras, built for Snapmaker
 
 The ESP32 connects over USB to your Klipper host. A Python monitor listens to Moonraker events, detects layer-photo markers, and sends trigger commands to the ESP32 over serial. The ESP32 then triggers your Canon camera over BLE.
 
-## Demo
+## Example Results: AFTER_LAYER_CHANGE.gcode
 
 ![Sample demo](docs/Sample.gif)
+
+Pros:
+- Floating tool head with less movement in the pictures
+
+Cons:
+- Adds extra toolhead movements and print time
+
+## Example Results: Filament Change G-code Trigger
+
+![Filament change demo](docs/Filmentchange.gif)
+
+Pros:
+- Faster trigger flow
+- Does not require a separate park command
+
+Cons:
+- Can create extra frames if filament changes happen multiple times per layer
+- Can miss layers if there are no filament-change events
 
 ## Sample Setup
 
