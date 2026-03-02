@@ -84,6 +84,24 @@ sudo systemctl start timelapse_monitor
 - On match, it sends `trigger` over USB serial to the ESP32
 - The ESP32 sends the BLE shutter command to the Canon camera
 
+## Testing Without Web UI (Recommended)
+
+You do not need to access the ESP32 web interface for normal validation.
+
+### Manual trigger from host
+
+```bash
+echo "trigger" > /dev/ttyACM0
+```
+
+### Watch ESP32 serial logs
+
+```bash
+pio device monitor
+```
+
+This is a valid headless test path and matches the host-script workflow used by this project.
+
 ## Architecture
 
 ```
@@ -102,9 +120,9 @@ The Python monitor subscribes to Moonraker WebSocket events, detects configured 
 
 ### ESP32 (Optional)
 Access web interface at **http://192.168.4.1**:
-- Test manual camera trigger
-- Check connection status
-- Adjust stabilization delay if needed
+- Optional manual camera trigger
+- Optional connection/status checks
+- Optional stabilization tuning
 
 ### Python Script
 Edit `/opt/timelapse_monitor/timelapse_monitor.py`:
