@@ -139,10 +139,10 @@ SSH into your printer host and run:
 # SSH into your printer host
 ssh root@printer_ip
 
-# Download and run install script
+# Clone repo and run install script
 cd /tmp
-curl -O https://raw.githubusercontent.com/yourusername/snapmaker-canonble-timelapse/main/install_timelapse_monitor.sh
-chmod +x install_timelapse_monitor.sh
+git clone https://github.com/yourusername/snapmaker-canonble-timelapse.git
+cd snapmaker-canonble-timelapse
 ./install_timelapse_monitor.sh
 
 # Start and verify

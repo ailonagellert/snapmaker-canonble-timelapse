@@ -39,8 +39,11 @@ echo -e "${GREEN}✓${NC} Directory created: $INSTALL_DIR\n"
 # Step 2: Copy files
 echo -e "${GREEN}[2/5]${NC} Copying timelapse_monitor files..."
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cp "$SCRIPT_DIR/timelapse_monitor.py" "$INSTALL_DIR/"
-cp "$SCRIPT_DIR/monitor.py" "$INSTALL_DIR/" 2>/dev/null || true
+if [ -f "$SCRIPT_DIR/scripts/host/timelapse_monitor.py" ]; then
+    cp "$SCRIPT_DIR/scripts/host/timelapse_monitor.py" "$INSTALL_DIR/"
+else
+    cp "$SCRIPT_DIR/timelapse_monitor.py" "$INSTALL_DIR/"
+fi
 chmod +x "$INSTALL_DIR/timelapse_monitor.py"
 echo -e "${GREEN}✓${NC} Files copied\n"
 

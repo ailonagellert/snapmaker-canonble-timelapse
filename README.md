@@ -6,6 +6,8 @@ The ESP32 connects over USB to your Klipper host. A Python monitor listens to Mo
 
 ## Example Results: AFTER_LAYER_CHANGE.gcode
 
+Source file: `examples/gcode/AFTER_LAYER_CHANGE.gcode`
+
 ![Sample demo](docs/Sample.gif)
 
 Pros:
@@ -15,6 +17,8 @@ Cons:
 - Adds extra toolhead movements and print time
 
 ## Example Results: Filament Change G-code Trigger
+
+Source file: `examples/gcode/changefilament.gcode`
 
 ![Filament change demo](docs/FilamentChange.gif)
 
@@ -29,6 +33,14 @@ Cons:
 ## Sample Setup
 
 ![Sample ESP32 camera setup](docs/samplesetup.png)
+
+## Project Structure
+
+- `src/`, `include/` - ESP32 firmware source
+- `scripts/host/` - host-side monitor/listener/restart scripts
+- `examples/gcode/` - example trigger G-code snippets
+- `klipper/` - Klipper macro examples (`timelapse_macros.cfg`)
+- `docs/` - user/developer documentation and media
 
 ## Features
 
@@ -97,9 +109,10 @@ Then connect the ESP32 to your Klipper host via USB. It should appear as `/dev/t
 # SSH into your printer (Raspberry Pi running Klipper)
 ssh pi@printer_ip
 
-# Download and run install script
-curl -O https://raw.githubusercontent.com/yourusername/snapmaker-canonble-timelapse/main/install_timelapse_monitor.sh
-chmod +x install_timelapse_monitor.sh
+# Clone repo and run install script
+cd /tmp
+git clone https://github.com/yourusername/snapmaker-canonble-timelapse.git
+cd snapmaker-canonble-timelapse
 sudo ./install_timelapse_monitor.sh
 
 # Start the service
