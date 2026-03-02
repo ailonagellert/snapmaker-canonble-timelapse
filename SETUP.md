@@ -1,14 +1,22 @@
-# ESP32-C3 Camera Controller Setup Guide
+# Advanced Setup Reference
 
-Complete guide for building and deploying the camera controller for 3D printer timelapse photography.
+This document is now a deeper reference.
+
+For the standard, recommended install path, use [INSTALLATION.md](INSTALLATION.md):
+- Clone on workstation
+- Flash firmware on workstation
+- Move ESP32 to printer host USB
+- SSH into host and install monitor scripts
+
+Use this file for advanced configuration details and deeper troubleshooting only.
 
 ## Table of Contents
 
 1. [Hardware Requirements](#hardware-requirements)
 2. [Software Requirements](#software-requirements)
 3. [Building the Firmware](#building-the-firmware)
-4. [Flashing to ESP32](#flashing-to-esp32)
-5. [Hardware Setup](#hardware-setup)
+4. [Advanced Flashing Notes](#flashing-to-esp32)
+5. [Advanced Hardware Notes](#hardware-setup)
 6. [Initial Configuration](#initial-configuration)
 7. [Camera Pairing](#camera-pairing)
 8. [Usage](#usage)
@@ -25,10 +33,8 @@ Complete guide for building and deploying the camera controller for 3D printer t
   - Tested: Canon EOS RP
   - Should work with: EOS R, R5, R6, R7, R10, M50 Mark II
 - **USB Cables**
-  - USB-C cable for ESP32-C3
-  - Standard USB cable for your printer
-- **Optional: Button** for manual trigger (connected to GPIO 9)
-- **Optional: LED** for status indication (uses built-in LED on pin 8)
+  - USB-C data cable for ESP32-C3
+  - Existing printer-to-host cable from your Klipper setup
 
 ### Supported Printers
 
@@ -120,31 +126,30 @@ You should see output like:
 ### Connection Diagram
 
 ```
-┌─────────────┐          ┌──────────────┐          ┌─────────────┐
-│             │          │              │          │             │
-│  3D Printer │◄────USB──┤   ESP32-C3   ├────USB───► Computer   │
-│   (Klipper) │          │              │          │ (OctoPrint) │
-│             │          │              │          │             │
-└─────────────┘          └──────┬───────┘          └─────────────┘
-                                │
-                            Bluetooth
-                                │
-                         ┌──────▼───────┐
-                         │              │
-                         │  Canon EOS   │
-                         │    Camera    │
-                         │              │
-                         └──────────────┘
+┌─────────────┐          ┌────────────────────┐          ┌──────────────┐
+│             │          │                    │          │              │
+│  3D Printer │─────────►│ Klipper/Moonraker  │◄──USB────┤   ESP32-C3    │
+│             │          │       Host         │          │              │
+└─────────────┘          └────────────────────┘          └──────┬───────┘
+                                 │
+                               Bluetooth
+                                 │
+                              ┌──────▼───────┐
+                              │              │
+                              │  Canon EOS   │
+                              │    Camera    │
+                              │              │
+                              └──────────────┘
 ```
 
 ### Physical Setup
 
-1. **Disconnect your printer's USB cable** from computer
-2. **Connect printer USB to ESP32-C3** (ESP32 acts as USB device)
-3. **Connect ESP32-C3 to computer** via separate USB port (ESP32 acts as USB host)
+1. **Keep your printer connected to Klipper host** as usual
+2. **Connect ESP32-C3 to the same host** via USB
+3. **Verify ESP32 serial device appears** (`/dev/ttyACM0` or `/dev/ttyACM*`)
 4. **Power on the Canon camera** and ensure Bluetooth is enabled
 
-**Note:** The ESP32-C3 transparently passes all data between printer and computer while monitoring G-code.
+**Note:** The Python monitor reads events from Moonraker and sends `trigger` to ESP32 over USB serial.
 
 ## Initial Configuration
 
@@ -345,9 +350,9 @@ This allows the printer to stabilize after movement.
 
 **Problem**: Printer not communicating with computer
 - **Solution 1**: Check USB cables are properly connected
-- **Solution 2**: Verify serial passthrough is enabled (default: ON)
+- **Solution 2**: Verify printer-to-host connection works without timelapse components
 - **Solution 3**: Try different USB ports
-- **Solution 4**: Check baud rate matches printer (usually 115200)
+- **Solution 4**: Confirm Klipper sees the expected printer serial device
 
 **Problem**: G-code not being parsed
 - **Solution**: Monitor serial output to see G-code lines, verify format

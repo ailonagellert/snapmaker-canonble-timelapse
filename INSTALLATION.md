@@ -1,31 +1,48 @@
-# Complete Installation & Setup Guide
+# Installation Guide (Recommended Workflow)
 
-Step-by-step guide to get your ESP32 Camera Controller up and running.
+This is the canonical setup path for this project:
+
+1. Clone on your workstation
+2. Flash ESP32 firmware from workstation
+3. Plug ESP32 into your Klipper/Moonraker host
+4. SSH into host and install/run monitor scripts
+5. Pair camera and print
 
 ## Table of Contents
 
-1. [Clone Repository](#clone-repository)
-2. [Flash Firmware to ESP32](#flash-firmware-to-esp32)
-3. [Initial Configuration](#initial-configuration)
-4. [Pair Canon Camera](#pair-canon-camera)
-5. [Configure Your Slicer](#configure-your-slicer)
-6. [Install Timelapse Monitor (Optional)](#install-timelapse-monitor-optional)
-7. [First Print](#first-print)
-8. [Troubleshooting](#troubleshooting)
+1. [Prerequisites](#prerequisites)
+2. [Clone on Workstation](#clone-on-workstation)
+3. [Flash Firmware on Workstation](#flash-firmware-on-workstation)
+4. [Move ESP32 to Printer Host](#move-esp32-to-printer-host)
+5. [Install Monitor via SSH](#install-monitor-via-ssh)
+6. [Initial Configuration (Optional)](#initial-configuration-optional)
+7. [Pair Canon Camera](#pair-canon-camera)
+8. [Configure Your Slicer](#configure-your-slicer)
+9. [First Print Verification](#first-print-verification)
+10. [Troubleshooting](#troubleshooting)
 
 ---
 
-## Clone Repository
+## Prerequisites
+
+- ESP32-C3 dev board
+- Canon EOS camera with Bluetooth
+- Klipper + Moonraker host (Snapmaker controller/Raspberry Pi/etc.)
+- One USB data cable (ESP32-C3 → host)
+- Workstation with PlatformIO for initial flash
+
+Wiring model is USB-only and documented in [WIRING.md](WIRING.md).
+
+---
+
+## Clone on Workstation
 
 ### Option 1: Git Clone (Recommended)
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cameracontroller.git
-cd cameracontroller
-
-# Navigate to project directory
-cd cameracontroller
+git clone https://github.com/yourusername/snapmaker-canonble-timelapse.git
+cd snapmaker-canonble-timelapse
 ```
 
 ### Option 2: Download ZIP
@@ -37,12 +54,7 @@ cd cameracontroller
 
 ---
 
-## Flash Firmware to ESP32
-
-### Prerequisites
-
-- **ESP32-C3 DevKit** connected via USB-C to your computer
-- **PlatformIO** installed on your computer
+## Flash Firmware on Workstation
 
 ### Install PlatformIO
 
@@ -65,7 +77,7 @@ pip install platformio
 
 **Using VS Code PlatformIO:**
 
-1. Open the `cameracontroller` folder in VS Code
+1. Open the `snapmaker-canonble-timelapse` folder in VS Code
 2. Click **PlatformIO** icon (ant logo) in sidebar
 3. Expand **esp32c3** environment
 4. Click **Build** (wait for "SUCCESS")
@@ -100,7 +112,38 @@ Then browse to: http://192.168.4.1
 
 ---
 
-## Initial Configuration
+## Move ESP32 to Printer Host
+
+1. Unplug ESP32-C3 from workstation
+2. Plug ESP32-C3 into the USB port on your Klipper/Moonraker host
+3. On host, verify serial device exists (`/dev/ttyACM0` or `/dev/ttyACM*`)
+
+---
+
+## Install Monitor via SSH
+
+SSH into your printer host and run:
+
+```bash
+# SSH into your printer host
+ssh root@printer_ip
+
+# Download and run install script
+cd /tmp
+curl -O https://raw.githubusercontent.com/yourusername/snapmaker-canonble-timelapse/main/install_timelapse_monitor.sh
+chmod +x install_timelapse_monitor.sh
+./install_timelapse_monitor.sh
+
+# Start and verify
+sudo systemctl start timelapse_monitor
+sudo systemctl status timelapse_monitor
+```
+
+This installs dependencies, configures a service, and starts Moonraker event monitoring.
+
+---
+
+## Initial Configuration (Optional)
 
 ### Access Web Interface
 
@@ -189,44 +232,13 @@ For detailed slicer instructions: **[GCODE_CONFIG.md](docs/GCODE_CONFIG.md)**
 
 ---
 
-## Install Timelapse Monitor (Optional)
-
-If you want to monitor timelapse progress or trigger remotely from Klipper/Moonraker:
-
-### On Your Printer (Raspberry Pi / Klipper Host)
-
-```bash
-# SSH into your printer
-ssh root@printer_ip
-
-# Download and run install script
-cd /tmp
-curl -O https://raw.githubusercontent.com/yourusername/cameracontroller/main/install_timelapse_monitor.sh
-chmod +x install_timelapse_monitor.sh
-./install_timelapse_monitor.sh
-
-# Start the service
-sudo systemctl start timelapse_monitor
-
-# Check status
-sudo systemctl status timelapse_monitor
-```
-
-This will:
-- Install Python dependencies
-- Create systemd service
-- Auto-start on boot
-- Monitor G-code and trigger camera
-
----
-
-## First Print
+## First Print Verification
 
 ### Pre-Print Checklist
 
 - [ ] ESP32 powered and connected
-- [ ] WiFi AP visible or connected to home network
-- [ ] LED on ESP32 is ON (solid or blinking)
+- [ ] ESP32 detected on host as `/dev/ttyACM*`
+- [ ] `timelapse_monitor` service running on host
 - [ ] Canon camera powered on and in range
 - [ ] Camera shows ✓ Connected in Bluetooth settings
 - [ ] Slicer has `;LAYER_CHANGE` in layer change G-code
@@ -235,12 +247,19 @@ This will:
 ### During Print
 
 1. **Start your print** via Klipper, OctoPrint, or printer UI
-2. **Watch for LED activity** on ESP32 - should blink with each layer
-3. **Check serial monitor** for confirmation:
+2. **Check monitor logs** on host for trigger events
+3. **Confirm camera captures** at layer markers
+
+Example service log check:
+
+```bash
+sudo journalctl -u timelapse_monitor -f
+```
+
+Typical output:
    ```
-   [GCode] Layer change detected!
-   [Camera] Taking photo...
-   [Camera] ✓ Photo captured
+   [HH:MM:SS] Detected layer photo trigger: ...
+   [HH:MM:SS] >>> Triggering camera!
    ```
 
 ### After Print
@@ -291,10 +310,10 @@ See **[CAMERA_PAIRING.md](docs/CAMERA_PAIRING.md)** for detailed troubleshooting
 ### Issue: Photos not triggering
 
 1. Verify G-code has `;LAYER_CHANGE` (open exported file in text editor)
-2. Check serial monitor: does it show "Layer change detected"?
-3. Verify stabilization delay isn't too long
-4. Try manual trigger: click "Take Photo" in web interface
-5. Check camera battery
+2. Check `timelapse_monitor` logs on host
+3. Confirm monitor can write to `/dev/ttyACM*`
+4. Try manual trigger from web interface
+5. Check camera battery and sleep settings
 
 ### Issue: Too many/few photos
 
@@ -310,32 +329,27 @@ See **[CAMERA_PAIRING.md](docs/CAMERA_PAIRING.md)** for detailed troubleshooting
 - [Camera Pairing Guide](docs/CAMERA_PAIRING.md) - Detailed Bluetooth pairing help
 - [G-code Configuration](docs/GCODE_CONFIG.md) - Slicer setup by model
 - [Development Guide](docs/DEVELOPMENT.md) - Contributing and advanced topics
-- [Hardware Wiring](WIRING.md) - Physical connections
+- [Hardware Wiring](WIRING.md) - USB-C host connection only
 
 **GitHub Issues:**
 - Check existing issues
 - Create new issue with:
   - What you were trying to do
   - What went wrong
-  - Serial monitor output (if applicable)
+   - `timelapse_monitor` logs (if applicable)
   - Your hardware setup
 
-**Serial Monitor Output:**
-When troubleshooting, capture debug logs:
+**Service Logs:**
+When troubleshooting, capture service logs:
 ```bash
-pio device monitor -b 115200 > debug_log.txt
-# Reproduce the issue
-# Ctrl+C to stop
-# Share debug_log.txt in issue
+sudo journalctl -u timelapse_monitor -n 200 > debug_log.txt
+# Share debug_log.txt in your issue
 ```
 
 ---
 
 ## Next Steps
 
-- Set up automated timelapse recording
-- Configure advanced triggers (Z-height specific, temperature, etc.)
-- Integrate with OctoLapse if using OctoPrint
-- Contribute improvements back to the project!
-
-Enjoy your automatic timelapse photography! 🎬📷
+- Tune marker strategy in [docs/GCODE_CONFIG.md](docs/GCODE_CONFIG.md)
+- Review BLE pairing details in [docs/CAMERA_PAIRING.md](docs/CAMERA_PAIRING.md)
+- Use [SETUP.md](SETUP.md) only for deeper configuration details

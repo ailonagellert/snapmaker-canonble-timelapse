@@ -1,22 +1,24 @@
-# ESP32 Camera Controller for 3D Printer Timelapse
+# Snapmaker Canon BLE Timelapse
 
-ESP32-C3 Bluetooth remote control for Canon EOS cameras. Connects via USB to your Klipper host - Python script monitors G-code and sends trigger commands to ESP32 over serial, which then triggers the camera via Bluetooth.
+ESP32-C3 Bluetooth shutter controller for Canon EOS cameras, built for Snapmaker + Klipper timelapse workflows.
+
+The ESP32 connects over USB to your Klipper host. A Python monitor listens to Moonraker events, detects layer-photo markers, and sends trigger commands to the ESP32 over serial. The ESP32 then triggers your Canon camera over BLE.
 
 ## Features
 
-- � **Bluetooth Camera Control** - Wireless Canon EOS camera trigger via BLE
-- 🐍 **Python G-code Monitoring** - Watches Moonraker/Klipper G-code stream for layer changes
-- 🌐 **Web Interface** - Manual trigger and status via WiFi
-- 🔄 **Universal** - Works with any Klipper printer (Snapmaker U1, Creality CR10-SE, etc.)
-- 🎯 **Multi-Slicer Support** - Recognizes layer markers from all major slicers
-- 📊 **Simple & Reliable** - Dedicated BLE remote, no USB complications
+- Bluetooth camera control for Canon EOS over BLE
+- Python-based monitor for Moonraker/Klipper print events
+- Serial trigger bridge from host to ESP32 (`/dev/ttyACM*`)
+- Works with Snapmaker U1 and other Klipper-based printers
+- Multi-slicer marker support (PrusaSlicer, Cura, OrcaSlicer, and more)
+- Optional ESP32 web UI for manual trigger and connection checks
 
 ## Hardware Requirements
 
-- **ESP32-C3 DevKit** - Acts as Bluetooth remote
+- **ESP32-C3 DevKit** - BLE camera trigger device
 - **Canon EOS camera** with Bluetooth (tested: EOS RP, R5, R6)
-- **Klipper/Moonraker host** - Raspberry Pi or similar running printer software
-- **USB cable** - Connect ESP32 to Klipper host (creates /dev/ttyACM0)
+- **Klipper + Moonraker host** - Raspberry Pi or similar
+- **USB cable** - Connect ESP32 to host (typically `/dev/ttyACM0`)
 
 ## Supported Slicers
 
@@ -30,11 +32,11 @@ ESP32-C3 Bluetooth remote control for Canon EOS cameras. Connects via USB to you
 
 ### 1. Flash ESP32 Firmware & Connect to Klipper Host
 ```bash
-git clone https://github.com/yourusername/cameracontroller.git
-cd cameracontroller
+git clone https://github.com/yourusername/snapmaker-canonble-timelapse.git
+cd snapmaker-canonble-timelapse
 pio run --target upload
 ```
-Then connect ESP32 via USB to your Klipper host (Raspberry Pi). It should appear as `/dev/ttyACM0`.
+Then connect the ESP32 to your Klipper host via USB. It should appear as `/dev/ttyACM0` (or another `/dev/ttyACM*` device).
 
 ### 2. Pair Canon Camera via Bluetooth
 1. Turn on your Canon camera (e.g., EOS RP)
@@ -50,7 +52,7 @@ Then connect ESP32 via USB to your Klipper host (Raspberry Pi). It should appear
 ssh pi@printer_ip
 
 # Download and run install script
-curl -O https://raw.githubusercontent.com/yourusername/cameracontroller/main/install_timelapse_monitor.sh
+curl -O https://raw.githubusercontent.com/yourusername/snapmaker-canonble-timelapse/main/install_timelapse_monitor.sh
 chmod +x install_timelapse_monitor.sh
 sudo ./install_timelapse_monitor.sh
 
@@ -59,16 +61,16 @@ sudo systemctl start timelapse_monitor
 ```
 
 ### 4. Add Layer Change Command to Slicer
-- **PrusaSlicer/Cura/OrcaSlicer**: Add to Layer Change G-code:
+- Add a layer marker in your slicer output (example):
   ```gcode
   ;LAYER_CHANGE
   ```
-- See [GCODE_CONFIG.md](docs/GCODE_CONFIG.md) for slicer-specific instructions
+- See [GCODE_CONFIG.md](docs/GCODE_CONFIG.md) for slicer-specific setup details.
 
 ### 5. Start Your Print!
-- Python script monitors G-code and triggers ESP32
-- ESP32 triggers camera via Bluetooth
-- LED blinks to confirm each photo captured
+- The Python monitor watches Moonraker output for layer-photo markers
+- On match, it sends `trigger` over USB serial to the ESP32
+- The ESP32 sends the BLE shutter command to the Canon camera
 
 ## Architecture
 
@@ -82,7 +84,7 @@ sudo systemctl start timelapse_monitor
                   Canon Camera
 ```
 
-The Python script monitors Moonraker's G-code stream for layer changes, then sends "trigger" command over USB serial to the ESP32. The ESP32 acts as a Bluetooth remote for your Canon camera.
+The Python monitor subscribes to Moonraker WebSocket events, detects configured markers, and writes `trigger` to the ESP32 serial device. The ESP32 acts as a dedicated BLE remote for the camera shutter.
 
 ## Configuration
 
@@ -99,7 +101,6 @@ Edit `/opt/timelapse_monitor/timelapse_monitor.py`:
 - Adjust trigger timing
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed configuration options.
-```
 
 ## Documentation
 
@@ -107,8 +108,8 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed configuration options.
 - **[📷 Camera Pairing](docs/CAMERA_PAIRING.md)** - Pair your Canon camera via Bluetooth
 - **[⚙️ G-code Configuration](docs/GCODE_CONFIG.md)** - Configure your 3D printer slicer
 - **[🔧 Development Guide](docs/DEVELOPMENT.md)** - For developers and contributors
-- **[🔌 Hardware Wiring](WIRING.md)** - Physical connections and pinout
-- **[📋 Setup Details](SETUP.md)** - Detailed firmware building and flashing
+- **[🔌 Hardware Wiring](WIRING.md)** - USB-C host connection (no GPIO required)
+- **[📋 Advanced Setup](SETUP.md)** - Deeper configuration and troubleshooting reference
 
 ## Quick Troubleshooting
 
@@ -116,7 +117,7 @@ See [INSTALLATION.md](INSTALLATION.md) for detailed configuration options.
 |---------|----------|
 | **WiFi AP not visible** | Check serial monitor for boot errors |
 | **Camera won't pair** | See [Camera Pairing Guide](docs/CAMERA_PAIRING.md) |
-| **Photos not triggering** | Verify `;LAYER_CHANGE` in G-code file |
+| **Photos not triggering** | Verify marker output in print console and monitor config |
 | **USB serial not working** | Rebuild firmware with `pio run --target upload` |
 
 See [INSTALLATION.md](INSTALLATION.md) for complete troubleshooting guide.
