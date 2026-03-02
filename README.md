@@ -14,23 +14,27 @@ The ESP32 connects over USB to your Klipper host. A Python monitor listens to Mo
 - Python-based monitor for Moonraker/Klipper print events
 - Serial trigger bridge from host to ESP32 (`/dev/ttyACM*`)
 - Works with Snapmaker U1 and other Klipper-based printers
-- Multi-slicer marker support (PrusaSlicer, Cura, OrcaSlicer, and more)
+- Orca-focused marker support (Snapmaker Orca and OrcaSlicer)
 - Optional ESP32 web UI for manual trigger and connection checks
 
 ## Hardware Requirements
 
 - **ESP32-C3 DevKit** - BLE camera trigger device
+  - Example board: https://amzn.to/4l1zeoW
 - **Canon EOS camera** with Bluetooth (tested: EOS RP, R5, R6)
 - **Klipper + Moonraker host** - Raspberry Pi or similar
 - **USB cable** - Connect ESP32 to host (typically `/dev/ttyACM0`)
 
+## Important Prerequisite (Snapmaker U1)
+
+- You must have **root SSH access** (or equivalent admin access) on the printer host to install and run monitor scripts.
+- For **Snapmaker U1**, this usually means running custom firmware that enables root access.
+- Recommended project: https://github.com/paxx12/SnapmakerU1-Extended-Firmware
+
 ## Supported Slicers
 
-- PrusaSlicer / SuperSlicer
-- Cura
-- Simplify3D
+- Snapmaker Orca
 - OrcaSlicer
-- BambuStudio
 
 ## Quick Start
 

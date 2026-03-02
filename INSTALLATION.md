@@ -26,10 +26,19 @@ This is the canonical setup path for this project:
 ## Prerequisites
 
 - ESP32-C3 dev board
+   - Example board: https://amzn.to/4l1zeoW
 - Canon EOS camera with Bluetooth
 - Klipper + Moonraker host (Snapmaker controller/Raspberry Pi/etc.)
+- Root SSH access (or equivalent admin access) to that host
 - One USB data cable (ESP32-C3 → host)
 - Workstation with PlatformIO for initial flash
+
+### Snapmaker U1 Requirement
+
+If you are running this on Snapmaker U1, you typically need custom firmware that enables root SSH and script installation.
+
+Recommended project:
+- https://github.com/paxx12/SnapmakerU1-Extended-Firmware
 
 Wiring model is USB-only and documented in [WIRING.md](WIRING.md).
 
@@ -123,6 +132,8 @@ Then browse to: http://192.168.4.1
 ## Install Monitor via SSH
 
 SSH into your printer host and run:
+
+> Requires root SSH (or a user with equivalent sudo/admin permissions).
 
 ```bash
 # SSH into your printer host
