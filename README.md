@@ -8,6 +8,10 @@ The ESP32 connects over USB to your Klipper host. A Python monitor listens to Mo
 
 ![Sample demo](docs/Sample.gif)
 
+## Sample Setup
+
+![Sample ESP32 camera setup](docs/samplesetup.png)
+
 ## Features
 
 - Bluetooth camera control for Canon EOS over BLE
