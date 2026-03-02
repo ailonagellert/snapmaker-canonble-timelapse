@@ -4,6 +4,17 @@ ESP32-C3 Bluetooth shutter controller for Canon EOS cameras, built for Snapmaker
 
 The ESP32 connects over USB to your Klipper host. A Python monitor listens to Moonraker events, detects layer-photo markers, and sends trigger commands to the ESP32 over serial. The ESP32 then triggers your Canon camera over BLE.
 
+Basically: the Python script monitors Moonraker for G-code events and triggers the camera through the ESP32 Bluetooth remote.
+
+## ⚠️ Important Disclaimer
+
+- This project is still in active development.
+- Current implementation is script-based (host-side Python monitor) and is not a fully native firmware integration.
+- Tested on limited hardware combinations; compatibility may vary by printer, firmware, slicer profile, and camera model.
+- Not guaranteed production-ready for every setup.
+- Use at your own risk: always validate with short test prints before running long jobs.
+- Community testing and feedback are highly appreciated, especially from Snapmaker U1 users.
+
 ## Example Results: AFTER_LAYER_CHANGE.gcode
 
 Source file: `examples/gcode/AFTER_LAYER_CHANGE.gcode`

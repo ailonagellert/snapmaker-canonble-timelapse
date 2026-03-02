@@ -46,6 +46,9 @@ G1 X5 Y5 F9000
 
 Adjust coordinates and speeds for your machine.
 
+You can also start from the template file:
+- `examples/gcode/NATIVE_TIMELAPSE_PARK.gcode`
+
 ---
 
 ## Verification
