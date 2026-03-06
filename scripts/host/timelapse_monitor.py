@@ -9,14 +9,31 @@ import os
 
 MOONRAKER_WS = "ws://localhost:7125/websocket"
 
+# Camera serial device can be forced with env var, e.g. CAMERA_DEVICE=/dev/ttyACM5
+FORCED_CAMERA_DEVICE = os.environ.get("CAMERA_DEVICE", "").strip()
+
 # Auto-detect ESP32 serial device
 def find_esp32_device():
-    """Find ESP32 device by searching /dev/ttyACM*"""
-    acm_devices = glob.glob('/dev/ttyACM*')
+    """Find ESP32 device by checking override, /dev/serial/by-id, then /dev/ttyACM*."""
+    if FORCED_CAMERA_DEVICE:
+        if os.path.exists(FORCED_CAMERA_DEVICE):
+            print(f"Using forced camera device: {FORCED_CAMERA_DEVICE}")
+            return FORCED_CAMERA_DEVICE
+        print(f"WARNING: CAMERA_DEVICE is set but missing: {FORCED_CAMERA_DEVICE}")
+
+    by_id_devices = sorted(glob.glob('/dev/serial/by-id/*'))
+    if by_id_devices:
+        device = by_id_devices[0]
+        print(f"Found ESP32 via by-id path: {device}")
+        return device
+
+    acm_devices = sorted(glob.glob('/dev/ttyACM*'))
     if acm_devices:
-        device = acm_devices[0]  # Use first available
+        device = acm_devices[-1]
         print(f"Found ESP32 at: {device}")
         return device
+
+    print("WARNING: No /dev/serial/by-id/* or /dev/ttyACM* camera device found")
     return None
 
 CAMERA_DEVICE = find_esp32_device()

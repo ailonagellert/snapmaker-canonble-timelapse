@@ -1,19 +1,36 @@
 #!/usr/bin/env python3
 """
 Keep serial port open and forward camera triggers
-Ensures /dev/ttyACM0 stays active for reliable triggering
+Uses CAMERA_DEVICE/SERIAL_PORT or auto-detection for reliable triggering
 """
 import serial
 import sys
 import time
+import os
+import glob
 
-SERIAL_PORT = "/dev/ttyACM0"
 BAUD_RATE = 115200
 
+def resolve_serial_port():
+    forced = os.environ.get("CAMERA_DEVICE", "").strip() or os.environ.get("SERIAL_PORT", "").strip()
+    if forced:
+        return forced
+
+    by_id_devices = sorted(glob.glob('/dev/serial/by-id/*'))
+    if by_id_devices:
+        return by_id_devices[0]
+
+    acm_devices = sorted(glob.glob('/dev/ttyACM*'))
+    if acm_devices:
+        return acm_devices[-1]
+
+    return "/dev/ttyACM0"
+
 def main():
+    serial_port = resolve_serial_port()
     try:
-        ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
-        print(f"Serial port {SERIAL_PORT} opened at {BAUD_RATE} baud")
+        ser = serial.Serial(serial_port, BAUD_RATE, timeout=1)
+        print(f"Serial port {serial_port} opened at {BAUD_RATE} baud")
         
         while True:
             try:
@@ -27,7 +44,7 @@ def main():
             time.sleep(0.1)
     
     except serial.SerialException as e:
-        print(f"Failed to open {SERIAL_PORT}: {e}")
+        print(f"Failed to open {serial_port}: {e}")
         sys.exit(1)
     except KeyboardInterrupt:
         print("\nStopped")
